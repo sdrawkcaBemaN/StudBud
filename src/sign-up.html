@@ -1,50 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Create Account</title>
 
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./css/style.css">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Create Account</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./css/style.css">
 </head>
 
 <body>
 
-<div class="auth-box" style="gap: 50px;">
+    <div class="auth-box" style="gap: 50px;">
 
-  <div class="center-text">
-    <h1>Create an account</h1>
-    <p class="small-link">
-      Already have an account? <a href="./login.html">Log in</a>
-    </p>
-  </div>
+        <div class="center-text">
+            <h1>Create an account</h1>
+            <p class="small-link">
+                Already have an account? <a href="./login.html">Log in</a>
+            </p>
+        </div>
 
-  <div class="auth-form" style="gap: 30px;">
+        <div class="auth-form" style="gap: 30px;">
 
-    <div class="input-group">
-      <label>What should we call you?</label>
-      <input id="username" type="text" placeholder="Enter your profile name">
+            <div class="input-group">
+                <label>What should we call you?</label>
+                <input id="username" type="text" placeholder="Enter your profile name">
+            </div>
+
+            <div class="input-group">
+                <label>What's your email?</label>
+                <input id="email" type="email" placeholder="Enter your email">
+            </div>
+
+            <div class="input-group">
+                <label>Create a password</label>
+                <input id="password" type="password" placeholder="Enter your password">
+            </div>
+
+            <button id="signup" class="btn-main" onclick="window.location.href='./login.html'">
+                Create an account
+            </button>
+
+        </div>
+
     </div>
 
-    <div class="input-group">
-      <label>What's your email?</label>
-      <input id="email" type="email" placeholder="Enter your email">
-    </div>
-
-    <div class="input-group">
-      <label>Create a password</label>
-      <input id="password" type="password" placeholder="Enter your password">
-    </div>
-
-    <button id="signup" class="btn-main">
-      Create an account
-    </button>
-
-  </div>
-
-</div>
-
-<script type="module" src="./js/signup.js"></script>
+    <script type="module" src="./js/signup.js"></script>
 </body>
+
 </html>

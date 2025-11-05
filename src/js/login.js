@@ -9,12 +9,12 @@ document.getElementById("login").onclick = function () {
     .then(() => {
       alert("Logged in!");
 
-
+        
       // Optional redirect:
       // window.location.href = "home.html";
 
+        window.location.href = "profile.html";
 
-      
     })
     .catch(err => {
       alert(err.message);
