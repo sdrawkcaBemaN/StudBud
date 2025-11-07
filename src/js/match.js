@@ -115,44 +115,59 @@ function animateAndAdvance(anim, showToast) {
 }
 
 /* ===== Buttons ===== */
-btnTick.addEventListener('click', async () => {
-    const p = currentProfile();
-    if (!p) return;
+btnTick.addEventListener("click", async () => {
+  const p = currentProfile();
+  if (!p) return;
 
-    const user = auth.currentUser;
-    if (!user) return alert("Not logged in");
+  const user = auth.currentUser;
+  if (!user) return alert("Not logged in");
 
-    const likesRef = collection(db, "likes");
+  const likesRef = collection(db, "likes");
 
-    // 1. Check if they already liked you
-    const q = query(
-        likesRef,
-        where("from", "==", p.uid),
-        where("to", "==", user.uid)
-    );
+  // 1. Check if they liked you first
+  const q = query(
+    likesRef,
+    where("from", "==", p.uid),
+    where("to", "==", user.uid)
+  );
+  const snap = await getDocs(q);
 
-    const snap = await getDocs(q);
+  if (!snap.empty) {
+    // ✅ MATCH
+    // First: Check if chat already exists
+    const chatsRef = collection(db, "chats");
+    const q2 = query(chatsRef, where("users", "array-contains", user.uid));
+    const chatSnap = await getDocs(q2);
+    let existingChat = null;
 
-    if (!snap.empty) {
-        // ✅ MATCH - Create chat
-        await addDoc(collection(db, "chats"), {
-            members: [user.uid, p.uid],
-            createdAt: Date.now()
-        });
-        toast(`You and ${p.name} matched! 💫`, 'like');
-    } else {
-        // ❗ No match yet - Store your like
-        await addDoc(likesRef, {
-            from: user.uid,
-            to: p.uid,
-            createdAt: Date.now()
-        });
-        toast(`Liked ${p.name} ✓`, 'like');
+    chatSnap.forEach(doc => {
+      if (doc.data().users.includes(p.uid)) {
+        existingChat = doc.id;
+      }
+    });
+
+    if (!existingChat) {
+      // Create chat with correct field name
+      await addDoc(chatsRef, {
+        users: [user.uid, p.uid],
+        createdAt: Date.now()
+      });
     }
 
-    // Local UI update (no change)
-    upsertMatch({ name: p.name, img: p.img, desc: p.desc });
-    animateAndAdvance('like');
+    toast(`You and ${p.name} matched! 💫`, "like");
+  } else {
+    // ❗ They have not liked you — just save your like
+    await addDoc(likesRef, {
+      from: user.uid,
+      to: p.uid,
+      createdAt: Date.now()
+    });
+    toast(`Liked ${p.name} ✓`, "like");
+  }
+
+  // local app UI update
+  upsertMatch({ name: p.name, img: p.img, desc: p.desc });
+  animateAndAdvance("like");
 });
 
 
