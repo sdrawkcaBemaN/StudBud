@@ -122,31 +122,39 @@ btnTick.addEventListener('click', async () => {
     const user = auth.currentUser;
     if (!user) return alert("Not logged in");
 
-    const chatsRef = collection(db, "chats");
+    const likesRef = collection(db, "likes");
 
-    // Check for existing chat between both users
-    const q = query(chatsRef, where("members", "array-contains", user.uid));
-    const snapshot = await getDocs(q);
+    // 1. Check if they already liked you
+    const q = query(
+        likesRef,
+        where("from", "==", p.uid),
+        where("to", "==", user.uid)
+    );
 
-    let exists = false;
-    snapshot.forEach(docSnap => {
-        const data = docSnap.data();
-        if (data.members.includes(p.uid)) exists = true;
-    });
+    const snap = await getDocs(q);
 
-    // If no chat, create one
-    if (!exists) {
-        await addDoc(chatsRef, {
+    if (!snap.empty) {
+        // ✅ MATCH - Create chat
+        await addDoc(collection(db, "chats"), {
             members: [user.uid, p.uid],
             createdAt: Date.now()
         });
+        toast(`You and ${p.name} matched! 💫`, 'like');
+    } else {
+        // ❗ No match yet - Store your like
+        await addDoc(likesRef, {
+            from: user.uid,
+            to: p.uid,
+            createdAt: Date.now()
+        });
+        toast(`Liked ${p.name} ✓`, 'like');
     }
 
-    // Local match
+    // Local UI update (no change)
     upsertMatch({ name: p.name, img: p.img, desc: p.desc });
-
-    animateAndAdvance('like', { text: `Matched with ${p.name} ✓`, type: 'like' });
+    animateAndAdvance('like');
 });
+
 
 
 btnDecline.addEventListener('click', () => {

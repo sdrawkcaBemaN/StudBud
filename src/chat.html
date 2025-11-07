@@ -4,179 +4,55 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>THINKER — Messages</title>
+
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./css/chat.css" />
+  <link rel="stylesheet" href="./css/chat.css" />
 </head>
+
 <body>
   <div class="page">
+
+    <!-- BACK BUTTON -->
     <div class="backbar" onclick="window.location.href='match.html'">
       <div class="back-icon">←</div>
       Back to Matchmaking
     </div>
 
     <div class="shell">
-      <!-- INBOX -->
+
+      <!-- LEFT SIDE: INBOX -->
       <aside class="inbox">
         <div class="inbox-head">Messages</div>
         <div id="inboxList" class="inbox-list"></div>
       </aside>
 
-      <!-- CHAT -->
+      <!-- RIGHT SIDE: CHAT -->
       <section class="chat">
+
+        <!-- CHAT HEADER -->
         <header class="chat-head">
-          <img id="chatAvatar" class="avatar" alt="" />
+          <img id="chatAvatar" class="avatar" />
           <div id="chatPeer" class="chat-peer">Select a chat</div>
         </header>
 
+        <!-- MESSAGE AREA -->
         <main id="messages" class="messages">
           <div id="emptyHint" style="opacity:.6; text-align:center; padding:24px;">
             Pick someone from the left to start chatting.
           </div>
         </main>
 
+        <!-- MESSAGE INPUT -->
         <footer class="composer">
           <input id="messageInput" type="text" placeholder="Type a message…" disabled />
           <button id="sendBtn" class="btn" disabled>Send</button>
         </footer>
       </section>
+
     </div>
   </div>
 
-  <script>
-    const MATCHES_KEY = 'thinker_matches'; // array of {name,img,desc} OR legacy [name]
-    const inboxList   = document.getElementById('inboxList');
-    const chatPeerEl  = document.getElementById('chatPeer');
-    const chatAvatar  = document.getElementById('chatAvatar');
-    const messagesEl  = document.getElementById('messages');
-    const emptyHint   = document.getElementById('emptyHint');
-    const input       = document.getElementById('messageInput');
-    const sendBtn     = document.getElementById('sendBtn');
-
-    let matches = [];
-    let current = null; // {name,img,desc}
-    let history = [];
-
-    function loadMatches() {
-      try { return JSON.parse(localStorage.getItem(MATCHES_KEY)) || []; }
-      catch { return []; }
-    }
-    function normalizeMatches(arr) {
-      return arr.map(m => typeof m === 'string' ? { name: m, img: '', desc: '' } : m);
-    }
-
-    function keyFor(name) { return 'chat_history_' + name; }
-    function loadHistory(name) {
-      try { return JSON.parse(localStorage.getItem(keyFor(name))) || []; }
-      catch { return []; }
-    }
-    function saveHistory(name, list) {
-      localStorage.setItem(keyFor(name), JSON.stringify(list));
-    }
-
-    function renderInbox() {
-      inboxList.innerHTML = '';
-      if (matches.length === 0) {
-        const msg = document.createElement('div');
-        msg.style.cssText = 'padding:16px; color:#666;';
-        msg.textContent = 'No matches yet. Go like some profiles!';
-        inboxList.appendChild(msg);
-        return;
-      }
-      matches.forEach(m => {
-        const item = document.createElement('div');
-        item.className = 'inbox-item' + (current && current.name === m.name ? ' active' : '');
-        item.dataset.name = m.name;
-
-        const img = document.createElement('img');
-        img.className = 'avatar';
-        img.alt = m.name;
-        img.src = m.img || '';
-        if (!m.img) img.style.background = '#ccc';
-
-        const box = document.createElement('div');
-        const name = document.createElement('div');
-        name.className = 'name';
-        name.textContent = m.name;
-
-        const snip = document.createElement('div');
-        snip.className = 'snippet';
-        const last = loadHistory(m.name).slice(-1)[0];
-        snip.textContent = last ? (last.sender === 'me' ? 'You: ' : '') + last.text : (m.desc || 'Tap to start chatting');
-
-        box.appendChild(name);
-        box.appendChild(snip);
-
-        item.appendChild(img);
-        item.appendChild(box);
-        item.addEventListener('click', () => selectPeer(m));
-        inboxList.appendChild(item);
-      });
-    }
-
-    function renderMessages() {
-      messagesEl.innerHTML = '';
-      if (!current) {
-        emptyHint.style.display = '';
-        input.disabled = true;
-        sendBtn.disabled = true;
-        chatPeerEl.textContent = 'Select a chat';
-        chatAvatar.src = '';
-        chatAvatar.style.background = '#ddd';
-        return;
-      }
-      emptyHint.style.display = 'none';
-      input.disabled = false;
-      sendBtn.disabled = false;
-      chatPeerEl.textContent = current.name;
-      chatAvatar.src = current.img || '';
-      if (!current.img) chatAvatar.style.background = '#ccc';
-
-      history.forEach(msg => {
-        const b = document.createElement('div');
-        b.className = 'bubble ' + (msg.sender === 'me' ? 'me' : 'them');
-        b.textContent = msg.text;
-        messagesEl.appendChild(b);
-      });
-      messagesEl.scrollTop = messagesEl.scrollHeight;
-    }
-
-    function selectPeer(m) {
-      current = m;
-      // update active state
-      [...inboxList.children].forEach(el => {
-        el.classList.toggle('active', el.dataset.name === m.name);
-      });
-      history = loadHistory(m.name);
-      renderMessages();
-    }
-
-    function sendMessage() {
-      if (!current) return;
-      const text = input.value.trim();
-      if (!text) return;
-      input.value = '';
-
-      const msg = { sender: 'me', text, ts: Date.now() };
-      history.push(msg);
-      saveHistory(current.name, history);
-      renderMessages();
-      renderInbox(); // update snippet
-    }
-
-    sendBtn.addEventListener('click', sendMessage);
-    input.addEventListener('keydown', e => { if (e.key === 'Enter') sendMessage(); });
-
-    // Init
-    matches = normalizeMatches(loadMatches());
-    renderInbox();
-
-    // If page opened with a peer query (e.g., chat.html?peer=Daniel%20Kalio), auto-select it
-    const params = new URLSearchParams(location.search);
-    const qPeer  = params.get('peer');
-    if (qPeer) {
-      const found = matches.find(m => m.name === qPeer);
-      if (found) selectPeer(found);
-    }
-  </script>
+  <!-- IMPORT CHAT.JS -->
+  <script type="module" src="./js/chat.js"></script>
 </body>
 </html>
