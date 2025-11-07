@@ -14,7 +14,7 @@ const firebaseConfig = {
   projectId: "studybudy-c382d",
   storageBucket: "studybudy-c382d.firebasestorage.app",
   messagingSenderId: "1085418542703",
-  appId: "1:1085418542703:web:2bafcba35d2a74b0cd9f9a"
+  appId: "1:1085418542703:web:2bafcba35d2a74b0cd9f9a",
 };
 
 // Initialize Firebase

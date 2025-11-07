@@ -1,58 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>THINKER — Messages</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>THINKER — Messages</title>
 
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./css/chat.css" />
-</head>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./css/chat.css" />
+  </head>
 
-<body>
-  <div class="page">
+  <body>
+    <div class="page">
+      <!-- BACK BUTTON -->
+      <div class="backbar" onclick="window.location.href='match.html'">
+        <div class="back-icon">←</div>
+        Back to Matchmaking
+      </div>
 
-    <!-- BACK BUTTON -->
-    <div class="backbar" onclick="window.location.href='match.html'">
-      <div class="back-icon">←</div>
-      Back to Matchmaking
+      <div class="shell">
+        <!-- LEFT SIDE: INBOX -->
+        <aside class="inbox">
+          <div class="inbox-head">Messages</div>
+          <div id="inboxList" class="inbox-list"></div>
+        </aside>
+
+        <!-- RIGHT SIDE: CHAT -->
+        <section class="chat">
+          <!-- CHAT HEADER -->
+          <header class="chat-head">
+            <img id="chatAvatar" class="avatar" />
+            <div id="chatPeer" class="chat-peer">Select a chat</div>
+          </header>
+
+          <!-- MESSAGE AREA -->
+          <main id="messages" class="messages">
+            <div
+              id="emptyHint"
+              style="opacity: 0.6; text-align: center; padding: 24px"
+            >
+              Pick someone from the left to start chatting.
+            </div>
+          </main>
+
+          <!-- MESSAGE INPUT -->
+          <footer class="composer">
+            <input
+              id="messageInput"
+              type="text"
+              placeholder="Type a message…"
+              disabled
+            />
+            <button id="sendBtn" class="btn" disabled>Send</button>
+          </footer>
+        </section>
+      </div>
     </div>
 
-    <div class="shell">
-
-      <!-- LEFT SIDE: INBOX -->
-      <aside class="inbox">
-        <div class="inbox-head">Messages</div>
-        <div id="inboxList" class="inbox-list"></div>
-      </aside>
-
-      <!-- RIGHT SIDE: CHAT -->
-      <section class="chat">
-
-        <!-- CHAT HEADER -->
-        <header class="chat-head">
-          <img id="chatAvatar" class="avatar" />
-          <div id="chatPeer" class="chat-peer">Select a chat</div>
-        </header>
-
-        <!-- MESSAGE AREA -->
-        <main id="messages" class="messages">
-          <div id="emptyHint" style="opacity:.6; text-align:center; padding:24px;">
-            Pick someone from the left to start chatting.
-          </div>
-        </main>
-
-        <!-- MESSAGE INPUT -->
-        <footer class="composer">
-          <input id="messageInput" type="text" placeholder="Type a message…" disabled />
-          <button id="sendBtn" class="btn" disabled>Send</button>
-        </footer>
-      </section>
-
-    </div>
-  </div>
-
-  <!-- IMPORT CHAT.JS -->
-  <script type="module" src="./js/chat.js"></script>
-</body>
+    <!-- IMPORT CHAT.JS -->
+    <script type="module" src="./js/chat.js"></script>
+  </body>
 </html>

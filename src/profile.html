@@ -1,39 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
+  <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Edit Profile</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./css/profile.css">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./css/profile.css" />
+  </head>
 
-</head>
-
-<body>
+  <body>
     <header>
-        <h2>Edit Profile</h2>
+      <h2>Edit Profile</h2>
     </header>
     <div class="container">
-        <div class="profile-header">
-            <img id="profileImage" src="https://placehold.co/142x142" alt="Profile Picture" />
-            <div>
-                <label>Profile Picture</label>
-                <input type="file" id="profilePicInput" class="upload"/>
-                <button id="uploadBtn" class="upload-btn">Upload Picture</button>
-            </div>
+      <div class="profile-header">
+        <img
+          id="profileImage"
+          src="https://placehold.co/142x142"
+          alt="Profile Picture"
+        />
+        <div>
+          <label>Profile Picture</label>
+          <input type="file" id="profilePicInput" class="upload" />
+          <button id="uploadBtn" class="upload-btn">Upload Picture</button>
         </div>
-        <form id="profileForm">
-            <div> <label>Username</label> <input type="text" id="username" /> </div>
-            <div> <label>Batch</label> <input type="text" id="batch" /> </div>
-            <div> <label>Faculty</label> <input type="text" id="faculty" /> </div>
-            <div> <label>Phone Number</label> <input type="text" id="phone" /> </div>
-            <div> <label>Study Program</label> <input type="text" id="program" /> </div>
-            <div> <label>Description</label> <textarea id="description"></textarea> </div> <button type="submit"
-                class="btn-update">Update</button>
-        </form>
+      </div>
+      <form id="profileForm">
+        <div><label>Username</label> <input type="text" id="username" /></div>
+        <div><label>Batch</label> <input type="text" id="batch" /></div>
+        <div><label>Faculty</label> <input type="text" id="faculty" /></div>
+        <div><label>Phone Number</label> <input type="text" id="phone" /></div>
+        <div>
+          <label>Study Program</label> <input type="text" id="program" />
+        </div>
+        <div>
+          <label>Description</label> <textarea id="description"></textarea>
+        </div>
+        <button type="submit" class="btn-update">Update</button>
+      </form>
     </div>
     <script type="module" src="./js/profile.js"></script>
-</body>
-
+  </body>
 </html>

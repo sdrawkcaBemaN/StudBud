@@ -7,20 +7,20 @@ import {
   orderBy,
   getDoc,
   onSnapshot,
-  addDoc
+  addDoc,
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
 
-const inboxList   = document.getElementById("inboxList");
-const chatPeerEl  = document.getElementById("chatPeer");
-const chatAvatar  = document.getElementById("chatAvatar");
-const messagesEl  = document.getElementById("messages");
-const input       = document.getElementById("messageInput");
-const sendBtn     = document.getElementById("sendBtn");
-const emptyHint   = document.getElementById("emptyHint");
+const inboxList = document.getElementById("inboxList");
+const chatPeerEl = document.getElementById("chatPeer");
+const chatAvatar = document.getElementById("chatAvatar");
+const messagesEl = document.getElementById("messages");
+const input = document.getElementById("messageInput");
+const sendBtn = document.getElementById("sendBtn");
+const emptyHint = document.getElementById("emptyHint");
 
 let currentChatId = null;
-let currentPeer   = null;
+let currentPeer = null;
 let unsubscribeMessages = null;
 
 // Load all chats that include the current user
@@ -45,7 +45,7 @@ onAuthStateChanged(auth, async (user) => {
       const chatData = chatDoc.data();
 
       // Get the other user in the chat
-      const peerUid = chatData.users.find(u => u !== user.uid);
+      const peerUid = chatData.users.find((u) => u !== user.uid);
       const peerSnap = await getDoc(doc(db, "users", peerUid));
       const peer = peerSnap.data();
 
@@ -54,7 +54,9 @@ onAuthStateChanged(auth, async (user) => {
       item.dataset.chatId = chatDoc.id;
 
       item.innerHTML = `
-        <img class="avatar" src="${peer.profilePic || ''}" style="background:#ddd">
+        <img class="avatar" src="${
+          peer.profilePic || ""
+        }" style="background:#ddd">
         <div>
           <div class="name">${peer.username || "Unknown"}</div>
           <div class="snippet">Tap to chat</div>
@@ -91,7 +93,8 @@ function selectChat(chatId, peer) {
     snapshot.forEach((msgDoc) => {
       const msg = msgDoc.data();
       const b = document.createElement("div");
-      b.className = "bubble " + (msg.sender === auth.currentUser.uid ? "me" : "them");
+      b.className =
+        "bubble " + (msg.sender === auth.currentUser.uid ? "me" : "them");
       b.textContent = msg.text;
       messagesEl.appendChild(b);
     });
@@ -101,7 +104,9 @@ function selectChat(chatId, peer) {
 }
 
 sendBtn.onclick = sendMessage;
-input.addEventListener("keydown", (e) => { if (e.key === "Enter") sendMessage(); });
+input.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") sendMessage();
+});
 
 async function sendMessage() {
   if (!currentChatId) return;

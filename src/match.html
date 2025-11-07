@@ -1,63 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>THINKER — Matchmaking</title>
-  <link rel="stylesheet" href="./css/match.css">
-</head>
-<body>
-  <main>
-    <h1 class="title">THINKER</h1>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>THINKER — Matchmaking</title>
+    <link rel="stylesheet" href="./css/match.css" />
+  </head>
+  <body>
+    <main>
+      <h1 class="title">THINKER</h1>
 
-    <div class="center-wrap">
-      <!-- Card stack (centered) -->
-      <div id="stack" class="stack"></div>
+      <div class="center-wrap">
+        <!-- Card stack (centered) -->
+        <div id="stack" class="stack"></div>
 
-      <!-- Controls (centered) -->
-      <div class="controls">
-        <img id="btnProfile"  src="../profile.jpeg"  alt="Profile" />
-        <img id="btnDecline"  src="../decline.jpeg"  alt="Decline" />
-        <img id="btnTick"     src="../tick.jpeg"     alt="Like" />
-        <img id="btnAirplane" src="../airplane.jpeg" alt="Messages" />
-      </div>
-
-      <!-- Bottom polish bundle -->
-      <div class="bottom-polish">
-        <div class="bottom-accent">
-          <p>Find your perfect study buddy — grow, learn, and think smarter together 💡</p>
+        <!-- Controls (centered) -->
+        <div class="controls">
+          <img id="btnProfile" src="../profile.jpeg" alt="Profile" />
+          <img id="btnDecline" src="../decline.jpeg" alt="Decline" />
+          <img id="btnTick" src="../tick.jpeg" alt="Like" />
+          <img id="btnAirplane" src="../airplane.jpeg" alt="Messages" />
         </div>
 
-        <div id="progressInfo" class="progress-info">
-          <div id="progressText">—</div>
-          <div class="progress-bar"><div id="progressFill" class="progress-fill"></div></div>
+        <!-- Bottom polish bundle -->
+        <div class="bottom-polish">
+          <div class="bottom-accent">
+            <p>
+              Find your perfect study buddy — grow, learn, and think smarter
+              together 💡
+            </p>
+          </div>
+
+          <div id="progressInfo" class="progress-info">
+            <div id="progressText">—</div>
+            <div class="progress-bar">
+              <div id="progressFill" class="progress-fill"></div>
+            </div>
+          </div>
+
+          <canvas id="ambient"></canvas>
         </div>
-
-        <canvas id="ambient"></canvas>
       </div>
-    </div>
-  </main>
+    </main>
 
-  <!-- Toasts -->
-  <div id="toasts" class="toasts"></div>
+    <!-- Toasts -->
+    <div id="toasts" class="toasts"></div>
 
-  <!-- Sticky footer at very bottom -->
-  <footer class="site-footer">
-    <div class="footer-wrap">
-      <div>
-        <div class="brand">THINKER</div>
-        <p class="address">
-          Bulaksumur, Caturtunggal, Kec. Depok, Kabupaten Sleman,<br />
-          Daerah Istimewa Yogyakarta 55281
-        </p>
+    <!-- Sticky footer at very bottom -->
+    <footer class="site-footer">
+      <div class="footer-wrap">
+        <div>
+          <div class="brand">THINKER</div>
+          <p class="address">
+            Bulaksumur, Caturtunggal, Kec. Depok, Kabupaten Sleman,<br />
+            Daerah Istimewa Yogyakarta 55281
+          </p>
+        </div>
+        <nav class="footer-right">
+          <button
+            id="btnReset"
+            class="reset-btn"
+            title="Clear likes & declines"
+          >
+            Reset decisions
+          </button>
+        </nav>
       </div>
-      <nav class="footer-right">
-        <button id="btnReset" class="reset-btn" title="Clear likes & declines">Reset decisions</button>
-      </nav>
-    </div>
-    <div class="footer-bottom">© <span id="year"></span> THINKER — Connecting curious minds campuswide 🌍</div>
-  </footer>
+      <div class="footer-bottom">
+        © <span id="year"></span> THINKER — Connecting curious minds campuswide
+        🌍
+      </div>
+    </footer>
 
-  <script type="module" src="./js/match.js"></script>
-</body>
+    <script type="module" src="./js/match.js"></script>
+  </body>
 </html>
