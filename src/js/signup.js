@@ -13,16 +13,16 @@ document.getElementById("signup").onclick = async function () {
     }
 
     try {
-        // 1. Create the user
+        
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
 
-        // 2. Update Firebase Auth profile
+        
         await updateProfile(user, {
             displayName: username
         });
 
-        // 3. Save username to Firestore
+        
         await setDoc(doc(db, "users", user.uid), {
             username: username,
             email: email,
