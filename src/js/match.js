@@ -336,7 +336,7 @@ rebuildQueue();
 renderStack();
 
 document.getElementById("btnHome").onclick = () => {
-  window.location.href = "home.html";
+  window.location.href = "index.html";
 };
 
 document.getElementById("btnLogout").onclick = () => {

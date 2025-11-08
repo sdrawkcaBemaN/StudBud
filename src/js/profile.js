@@ -81,7 +81,7 @@ profilePicInput.addEventListener("change", async (event) => {
 function doLogout(e) {
   e.preventDefault();
   signOut(auth).then(() => {
-    window.location.href = "home.html";
+    window.location.href = "index.html";
   });
 }
 
