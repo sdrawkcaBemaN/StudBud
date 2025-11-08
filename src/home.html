@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>THINKER — Study Mates</title>
+
+    <link rel="stylesheet" href="./css/home.css" />
+  </head>
+
+  <body>
+    <!-- NAV -->
+    <header class="nav">
+      <div class="container nav-inner">
+        <div class="nav-left">
+          <a href="home.html" class="brand">
+            <span>THINKER</span>
+          </a>
+          <a href="home.html">HOME</a>
+        </div>
+
+        <div class="nav-right">
+          <!-- Logged OUT -->
+          <div id="navAnon" style="display: flex; gap: 10px">
+            <a class="btn btn-outline" href="login.html">Sign in</a>
+            <a class="btn btn-primary" href="sign-up.html">Sign up</a>
+          </div>
+          <!-- Logged IN -->
+          <div
+            id="navAuthed"
+            style="display: none; gap: 12px; align-items: center"
+          >
+            <a href="profile.html" class="icon-btn" aria-label="Profile">
+              <svg class="icon" viewBox="0 0 24 24">
+                <path d="M4 20a8 8 0 0 1 16 0" />
+                <circle cx="12" cy="8" r="4" />
+              </svg>
+            </a>
+            <a href="chat.html" class="icon-btn" aria-label="Direct Messages">
+              <svg class="icon" viewBox="0 0 24 24">
+                <path
+                  d="M21 12a8 8 0 1 1-4-6.9L21 5l-1.1 2A8.2 8.2 0 0 1 21 12z"
+                />
+              </svg>
+            </a>
+            <button id="logoutBtn" class="btn btn-outline">Logout</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- MAIN -->
+    <main>
+      <section class="container section">
+        <h1 class="wordmark">THINKER</h1>
+        <figure class="hero"></figure>
+
+        <div class="cta-wrap">
+          <button id="startBtn" class="cta">Start Studying</button>
+        </div>
+
+        <div class="about">
+          <div class="label">About&nbsp;Us</div>
+          <div>
+            <h2>Find your study-mate, not your soulmate</h2>
+            <p>
+              We connect students who share the same goals, subjects, and grind
+              energy. Whether you're pulling an all-nighter or just need someone
+              to keep you accountable, we match you with the right partner to
+              study smarter (and have some fun along the way).
+            </p>
+            <p>Swipe less. Study more. Succeed together.</p>
+          </div>
+        </div>
+
+        <div class="bottom-polish">
+          <p>Ready to match up and lock in? Start your study streak today ✨</p>
+          <div class="mini-line">
+            Tip: You can always see your matched partners in Messages.
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="site-footer">
+      <div class="footer-wrap">
+        <div>
+          <div class="brandf">THINKER</div>
+          <p class="address">
+            Bulaksumur, Caturtunggal, Kec. Depok, Kabupaten Sleman,<br />
+            Daerah Istimewa Yogyakarta 55281
+          </p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        © <span id="year"></span> THINKER — Connecting curious minds campuswide
+        🌍
+      </div>
+    </footer>
+
+    <script type="module" src="js/home.js"></script>
+  </body>
+</html>

@@ -1,47 +1,111 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Edit Profile</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>THINKER — Edit Profile</title>
     <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="./css/profile.css" />
   </head>
-
   <body>
-    <header>
-      <h2>Edit Profile</h2>
+    <!-- Topbar: Home + Logo + Title on left; Log out on right -->
+    <header class="topbar">
+      <div class="left">
+        <a class="home-btn" href="home.html">Home</a>
+        <div class="center-title">Edit Profile</div>
+      </div>
+      <div class="right">
+        <button id="logoutBtn" class="logout-btn">Log out</button>
+      </div>
     </header>
-    <div class="container">
-      <div class="profile-header">
-        <img
-          id="profileImage"
-          src="https://placehold.co/142x142"
-          alt="Profile Picture"
-        />
+
+    <!-- Main content -->
+    <main class="container">
+      <div class="page-title">Edit Profile</div>
+
+      <div class="profile-grid">
+        <!-- Left column: Avatar -->
         <div>
-          <label>Profile Picture</label>
-          <input type="file" id="profilePicInput" class="upload" />
-          <button id="uploadBtn" class="upload-btn">Upload Picture</button>
+          <div class="avatar">
+            <img
+              id="profileImage"
+              src="https://placehold.co/142x142"
+              alt="Profile Picture"
+            />
+            <label for="profilePicInput">Profile Picture</label>
+            <input type="file" id="profilePicInput" accept="image/*" />
+            <button id="uploadBtn">Upload Picture</button>
+          </div>
+        </div>
+
+        <!-- Right column: Form -->
+        <form id="profileForm" novalidate>
+          <div class="two-col">
+            <div class="field">
+              <label for="username">Username</label>
+              <input id="username" type="text" placeholder="Your public name" />
+            </div>
+            <div class="field">
+              <label for="batch">Batch</label>
+              <input id="batch" type="text" placeholder="e.g. 2025" />
+            </div>
+          </div>
+
+          <div class="two-col">
+            <div class="field">
+              <label for="faculty">Faculty</label>
+              <input id="faculty" type="text" placeholder="e.g. Science" />
+            </div>
+            <div class="field">
+              <label for="phone">Phone Number</label>
+              <input id="phone" type="text" placeholder="Optional" />
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="program">Study Program</label>
+            <input
+              id="program"
+              type="text"
+              placeholder="e.g. Computer Science"
+            />
+          </div>
+
+          <div class="field">
+            <label for="description">Description</label>
+            <textarea
+              id="description"
+              placeholder="Tell people about your study preferences..."
+            ></textarea>
+          </div>
+
+          <div class="action-row">
+            <button type="submit" class="update-btn">Update Profile</button>
+          </div>
+        </form>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+      <div class="footer-wrap">
+        <div>
+          <div class="brandf">THINKER</div>
+          <p class="address">
+            Bulaksumur, Caturtunggal, Kec. Depok, Kabupaten Sleman,<br />
+            Daerah Istimewa Yogyakarta 55281
+          </p>
         </div>
       </div>
-      <form id="profileForm">
-        <div><label>Username</label> <input type="text" id="username" /></div>
-        <div><label>Batch</label> <input type="text" id="batch" /></div>
-        <div><label>Faculty</label> <input type="text" id="faculty" /></div>
-        <div><label>Phone Number</label> <input type="text" id="phone" /></div>
-        <div>
-          <label>Study Program</label> <input type="text" id="program" />
-        </div>
-        <div>
-          <label>Description</label> <textarea id="description"></textarea>
-        </div>
-        <button type="submit" class="btn-update">Update</button>
-      </form>
-    </div>
+      <div class="footer-bottom">
+        © <span id="yearProfile"></span> THINKER — Connecting curious minds
+        campuswide 🌍
+      </div>
+    </footer>
+
     <script type="module" src="./js/profile.js"></script>
   </body>
 </html>

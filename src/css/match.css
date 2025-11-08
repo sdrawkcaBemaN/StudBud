@@ -1,10 +1,11 @@
 :root {
-  --accent: #ff8d76;
-  --ink: #111b21;
-  --muted: #6b7c85;
-  --border: rgba(0, 0, 0, 0.12);
-  --like: #22c55e;
-  --decline: #ef4444;
+  --bg: #ffffff;
+  --text: #0d0e10;
+  --muted: #5c6470;
+  --accent: #e34a40;
+  --accent-ink: #ffffff;
+  --card: #f6f7f9;
+  --radius: 16px;
   --maxw: 1200px;
 }
 * {
@@ -42,6 +43,7 @@ main {
   font-family: Heebo, sans-serif;
   font-weight: 400;
   line-height: 1;
+  font-weight: 900;
   margin: 0 0 20px 0;
   user-select: none;
 }
@@ -355,4 +357,60 @@ main {
   .card {
     height: 380px;
   }
+}
+
+.refresh-top {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: white;
+  color: #333;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid #ccc;
+  transition: 0.2s;
+}
+.refresh-top:hover {
+  background: #f5f5f5;
+}
+
+.top-header {
+  position: sticky;
+  top: 0;
+  background: var(--accent);
+  color: var(--accent-ink);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  z-index: 50;
+  flex-shrink: 0;
+}
+
+.header-right {
+  display: flex;
+  gap: 10px;
+}
+
+.header-btn {
+  background: #111;
+  color: white;
+  padding: 7px 14px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.header-btn:hover {
+  opacity: 0.85;
+}
+
+.logo {
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  font-size: 16px;
 }

@@ -8,6 +8,7 @@ import {
   getDoc,
   onSnapshot,
   addDoc,
+  serverTimestamp,
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
 
@@ -23,7 +24,6 @@ let currentChatId = null;
 let currentPeer = null;
 let unsubscribeMessages = null;
 
-// Load all chats that include the current user
 onAuthStateChanged(auth, async (user) => {
   if (!user) return (window.location.href = "login.html");
 
@@ -44,7 +44,6 @@ onAuthStateChanged(auth, async (user) => {
     snapshot.forEach(async (chatDoc) => {
       const chatData = chatDoc.data();
 
-      // Get the other user in the chat
       const peerUid = chatData.users.find((u) => u !== user.uid);
       const peerSnap = await getDoc(doc(db, "users", peerUid));
       const peer = peerSnap.data();
@@ -82,7 +81,6 @@ function selectChat(chatId, peer) {
   messagesEl.innerHTML = "";
   emptyHint.style.display = "none";
 
-  // Stop the previous listener if switching chats
   if (unsubscribeMessages) unsubscribeMessages();
 
   const msgsRef = collection(db, "chats", chatId, "messages");
@@ -117,6 +115,6 @@ async function sendMessage() {
   await addDoc(collection(db, "chats", currentChatId, "messages"), {
     text,
     sender: auth.currentUser.uid,
-    ts: Date.now(),
+    ts: serverTimestamp(),
   });
 }

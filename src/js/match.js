@@ -15,7 +15,6 @@ let PROFILES_MASTER = [];
 onAuthStateChanged(auth, async (user) => {
   if (!user) return (window.location.href = "login.html");
 
-  // load all users except yourself
   const snap = await getDocs(collection(db, "users"));
   PROFILES_MASTER = [];
 
@@ -32,14 +31,24 @@ onAuthStateChanged(auth, async (user) => {
     }
   });
 
-  // now rebuild UI with real profiles
-  rebuildQueue();
+  // Load likes from Firebase once and compute sets
+  const likesSnap = await getDocs(collection(db, "likes"));
+  const alreadyLiked = new Set(); // users this client already liked (backend)
+  const likedYou = new Set(); // users who liked this client
+  likesSnap.forEach((d) => {
+    const like = d.data();
+    if (like.from === user.uid) alreadyLiked.add(like.to);
+    if (like.to === user.uid) likedYou.add(like.from);
+  });
+
+  // now rebuild UI with real profiles excluding already liked / who liked you
+  rebuildQueue(alreadyLiked, likedYou);
   renderStack();
 });
 
 /* ===== Storage ===== */
-const MATCHES_KEY = "thinker_matches"; // [{name,img,desc}]
-const DECLINED_KEY = "thinker_declined"; // [name]
+const MATCHES_KEY = "thinker_matches"; // [{uid,name,img,desc}]
+const DECLINED_KEY = "thinker_declined"; // [uid]
 const loadJSON = (k, f) => {
   try {
     return JSON.parse(localStorage.getItem(k)) ?? f;
@@ -54,20 +63,19 @@ const loadDeclined = () => loadJSON(DECLINED_KEY, []);
 const saveDeclined = (arr) => saveJSON(DECLINED_KEY, arr);
 
 function upsertMatch(obj) {
+  // obj must contain { uid, name, img, desc }
   const list = loadMatches();
-  const i = list.findIndex(
-    (m) => (typeof m === "string" ? m : m.name) === obj.name
-  );
+  const i = list.findIndex((m) => m.uid === obj.uid);
   if (i >= 0) list[i] = obj;
   else list.push(obj);
   saveMatches(list);
-  const key = "chat_history_" + obj.name;
+  const key = "chat_history_" + obj.uid; // use uid for chat history local key
   if (!localStorage.getItem(key)) localStorage.setItem(key, "[]");
 }
-function addDeclined(name) {
+function addDeclined(uid) {
   const d = loadDeclined();
-  if (!d.includes(name)) {
-    d.push(name);
+  if (!d.includes(uid)) {
+    d.push(uid);
     saveDeclined(d);
   }
 }
@@ -81,7 +89,8 @@ const btnProfile = document.getElementById("btnProfile");
 const toastsEl = document.getElementById("toasts");
 const progressText = document.getElementById("progressText");
 const progressFill = document.getElementById("progressFill");
-document.getElementById("year").textContent = new Date().getFullYear();
+if (document.getElementById("year"))
+  document.getElementById("year").textContent = new Date().getFullYear();
 
 /* ===== Toasts ===== */
 function toast(msg, type = "info") {
@@ -94,14 +103,30 @@ function toast(msg, type = "info") {
 
 /* ===== Queue ===== */
 let queue = [];
-function rebuildQueue() {
-  const liked = new Set(
-    loadMatches().map((m) => (typeof m === "string" ? m : m.name))
-  );
+
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function rebuildQueue(alreadyLiked = new Set(), likedYou = new Set()) {
+  // local liked UIDs (from localStorage)
+  const likedLocal = new Set(loadMatches().map((m) => m.uid));
   const declined = new Set(loadDeclined());
+
   queue = PROFILES_MASTER.filter(
-    (p) => !liked.has(p.name) && !declined.has(p.name)
+    (p) =>
+      !likedLocal.has(p.uid) &&
+      !declined.has(p.uid) &&
+      !alreadyLiked.has(p.uid) &&
+      !likedYou.has(p.uid)
   );
+
+  // randomize order so refresh/top-right doesn't always show same ordering
+  shuffle(queue);
 }
 
 function renderStack() {
@@ -110,7 +135,8 @@ function renderStack() {
     const empty = document.createElement("div");
     empty.style.cssText =
       "color:#333;font-size:20px;padding:12px 16px;background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.08)";
-    empty.textContent = "No more profiles — check your Messages ✈️";
+    empty.textContent =
+      "No more profiles — check your Messages Or wait to be accepted!✈️";
     stackEl.appendChild(empty);
     updateProgress();
     return;
@@ -137,7 +163,7 @@ function renderStack() {
     card.appendChild(disB);
     stackEl.appendChild(card);
   });
-  attachDrag();
+
   updateProgress();
 }
 
@@ -159,7 +185,7 @@ function animateAndAdvance(anim, showToast) {
   }, 360);
 }
 
-/* ===== Buttons ===== */
+/* ===== Buttons (clean + single handlers) ===== */
 btnTick.addEventListener("click", async () => {
   const p = currentProfile();
   if (!p) return;
@@ -201,7 +227,7 @@ btnTick.addEventListener("click", async () => {
 
     toast(`You and ${p.name} matched! 💫`, "like");
   } else {
-    // ❗ They have not liked you — just save your like
+    // ❗ They have not liked you — just save your like (backend)
     await addDoc(likesRef, {
       from: user.uid,
       to: p.uid,
@@ -210,17 +236,17 @@ btnTick.addEventListener("click", async () => {
     toast(`Liked ${p.name} ✓`, "like");
   }
 
-  // local app UI update
-  upsertMatch({ name: p.name, img: p.img, desc: p.desc });
+  // local app UI update (store by uid)
+  upsertMatch({ uid: p.uid, name: p.name, img: p.img, desc: p.desc });
   animateAndAdvance("like");
 });
 
 btnDecline.addEventListener("click", () => {
   const p = currentProfile();
   if (!p) return;
-  addDeclined(p.name);
+  addDeclined(p.uid); // store uid
   animateAndAdvance("decline", {
-    text: `Declined ${p.name} ✖`,
+    text: `You skipped ${p.name}`,
     type: "decline",
   });
 });
@@ -228,22 +254,31 @@ btnAirplane.addEventListener("click", () => {
   window.location.href = "chat.html";
 });
 btnProfile.addEventListener("click", () => {
-  const p = currentProfile();
-  if (!p) return;
-});
-btnProfile.addEventListener("click", () => {
   window.location.href = "profile.html";
 });
-btnProfile.addEventListener("click", () => {
-  const p = currentProfile();
-  if (!p) return;
-});
 
-document.getElementById("btnReset").addEventListener("click", () => {
+// Refresh (reset local decisions + re-run queue with backend exclusion + randomize)
+document.getElementById("refreshTop").addEventListener("click", async () => {
   if (!confirm("Reset likes/declines? (Chat histories will stay)")) return;
+
+  // Clear local decisions
   localStorage.removeItem(MATCHES_KEY);
   localStorage.removeItem(DECLINED_KEY);
-  rebuildQueue();
+
+  // Rebuild queue excluding backend likes
+  const user = auth.currentUser;
+  if (!user) return;
+
+  const likesSnap = await getDocs(collection(db, "likes"));
+  const alreadyLiked = new Set();
+  const likedYou = new Set();
+  likesSnap.forEach((doc) => {
+    const like = doc.data();
+    if (like.from === user.uid) alreadyLiked.add(like.to);
+    if (like.to === user.uid) likedYou.add(like.from);
+  });
+
+  rebuildQueue(alreadyLiked, likedYou);
   renderStack();
   toast("Decisions reset ✓", "info");
 });
@@ -255,17 +290,20 @@ function updateProgress() {
     done = total - remaining;
   const pct = total ? Math.round((done / total) * 100) : 100;
   progressText.textContent = `${remaining} of ${total} profiles left`;
-  progressFill.style.width = `${pct}%`;
+  if (progressFill) progressFill.style.width = `${pct}%`;
 }
 
 /* ===== Ambient canvas ===== */
 const c = document.getElementById("ambient");
-const ctx = c.getContext("2d");
+let ctx = null;
+if (c) ctx = c.getContext("2d");
 function resizeAmbient() {
+  if (!c) return;
   c.width = document.querySelector(".center-wrap").clientWidth;
   c.height = 180;
 }
 function animDots() {
+  if (!c || !ctx) return;
   const dots = Array.from({ length: 20 }, () => ({
     x: Math.random() * c.width,
     y: Math.random() * c.height,
@@ -291,99 +329,20 @@ function animDots() {
 }
 window.addEventListener("resize", resizeAmbient);
 
-/* ===== Drag-to-like/decline ===== */
-function attachDrag() {
-  const card = topCardElement();
-  if (!card) return;
-  const likeB = card.querySelector(".badge.like");
-  const disB = card.querySelector(".badge.decline");
-  let sx = 0,
-    sy = 0,
-    dx = 0,
-    dy = 0,
-    dragging = false;
-  const start = (x, y) => {
-    dragging = true;
-    sx = x;
-    sy = y;
-    dx = 0;
-    dy = 0;
-    card.style.transition = "none";
-  };
-  const move = (x, y) => {
-    if (!dragging) return;
-    dx = x - sx;
-    dy = y - sy;
-    const rot = dx * 0.05,
-      blur = Math.min(Math.abs(dx) / 50, 3);
-    card.style.transform = `translate(${dx}px,${dy}px) rotate(${rot}deg)`;
-    card.style.filter = `blur(${blur}px)`;
-    const la = Math.min(Math.max(dx / 120, 0), 1),
-      da = Math.min(Math.max(-dx / 120, 0), 1);
-    likeB.style.opacity = la;
-    likeB.style.transform = `scale(${0.9 + la * 0.1})`;
-    disB.style.opacity = da;
-    disB.style.transform = `scale(${0.9 + da * 0.1})`;
-  };
-  const end = () => {
-    if (!dragging) return;
-    dragging = false;
-    likeB.style.opacity = 0;
-    disB.style.opacity = 0;
-    const threshold = 140;
-    card.style.transition = "transform .28s ease, filter .28s ease";
-    if (dx > threshold) {
-      const p = currentProfile();
-      if (!p) return;
-      upsertMatch({ name: p.name, img: p.img, desc: p.desc });
-      card.style.transform = `translate(120%,0) rotate(10deg)`;
-      card.style.filter = "blur(2px)";
-      setTimeout(() => {
-        queue.pop();
-        renderStack();
-        toast(`Liked ${p.name} ✓`, "like");
-      }, 280);
-    } else if (dx < -threshold) {
-      const p = currentProfile();
-      if (!p) return;
-      addDeclined(p.name);
-      card.style.transform = `translate(-120%,0) rotate(-10deg)`;
-      card.style.filter = "blur(2px)";
-      setTimeout(() => {
-        queue.pop();
-        renderStack();
-        toast(`Declined ${p.name} ✖`, "decline");
-      }, 280);
-    } else {
-      card.style.transform = "translate(0,0) rotate(0)";
-      card.style.filter = "blur(0)";
-    }
-  };
-  card.addEventListener("mousedown", (e) => start(e.clientX, e.clientY));
-  window.addEventListener("mousemove", (e) => move(e.clientX, e.clientY));
-  window.addEventListener("mouseup", end);
-  card.addEventListener(
-    "touchstart",
-    (e) => {
-      const t = e.touches[0];
-      start(t.clientX, t.clientY);
-    },
-    { passive: true }
-  );
-  card.addEventListener(
-    "touchmove",
-    (e) => {
-      const t = e.touches[0];
-      move(t.clientX, t.clientY);
-    },
-    { passive: true }
-  );
-  card.addEventListener("touchend", end);
-  card.addEventListener("touchcancel", end);
-}
-
 /* ===== Init ===== */
 resizeAmbient();
 animDots();
 rebuildQueue();
 renderStack();
+
+document.getElementById("btnHome").onclick = () => {
+  window.location.href = "home.html";
+};
+
+document.getElementById("btnLogout").onclick = () => {
+  import("./firebase-config.js").then(({ auth }) => {
+    import("https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js")
+      .then(({ signOut }) => signOut(auth))
+      .then(() => (window.location.href = "index.html"));
+  });
+};

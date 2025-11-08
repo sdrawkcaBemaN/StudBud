@@ -14,28 +14,23 @@
 
   <body>
     <div class="page">
-      <!-- BACK BUTTON -->
       <div class="backbar" onclick="window.location.href='match.html'">
         <div class="back-icon">←</div>
         Back to Matchmaking
       </div>
 
       <div class="shell">
-        <!-- LEFT SIDE: INBOX -->
         <aside class="inbox">
           <div class="inbox-head">Messages</div>
           <div id="inboxList" class="inbox-list"></div>
         </aside>
 
-        <!-- RIGHT SIDE: CHAT -->
         <section class="chat">
-          <!-- CHAT HEADER -->
           <header class="chat-head">
             <img id="chatAvatar" class="avatar" />
             <div id="chatPeer" class="chat-peer">Select a chat</div>
           </header>
 
-          <!-- MESSAGE AREA -->
           <main id="messages" class="messages">
             <div
               id="emptyHint"
@@ -45,7 +40,6 @@
             </div>
           </main>
 
-          <!-- MESSAGE INPUT -->
           <footer class="composer">
             <input
               id="messageInput"
@@ -59,7 +53,6 @@
       </div>
     </div>
 
-    <!-- IMPORT CHAT.JS -->
     <script type="module" src="./js/chat.js"></script>
   </body>
 </html>

@@ -1,8 +1,10 @@
 :root {
-  --accent: #ff8d76; /* THINKER orange */
-  --panel: #efeae2;
-  --ink: #111b21;
-  --muted: #6b7c85;
+  --bg: #ffffff;
+  --text: #0d0e10;
+  --muted: #5c6470;
+  --accent: #e34a40;
+  --accent-ink: #ffffff;
+  --card: #f6f7f9;
   --border: rgba(0, 0, 0, 0.12);
 }
 * {

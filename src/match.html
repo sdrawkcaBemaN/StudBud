@@ -6,11 +6,25 @@
     <title>THINKER — Matchmaking</title>
     <link rel="stylesheet" href="./css/match.css" />
   </head>
+
   <body>
+    <header class="top-header">
+      <div class="header-left">
+        <span class="logo">THINKER</span>
+      </div>
+
+      <div class="header-right">
+        <button id="btnHome" class="header-btn">Home</button>
+        <button id="btnLogout" class="header-btn">Logout</button>
+      </div>
+    </header>
+
     <main>
       <h1 class="title">THINKER</h1>
 
       <div class="center-wrap">
+        <div id="refreshTop" class="refresh-top">Refresh</div>
+
         <!-- Card stack (centered) -->
         <div id="stack" class="stack"></div>
 
@@ -56,15 +70,7 @@
             Daerah Istimewa Yogyakarta 55281
           </p>
         </div>
-        <nav class="footer-right">
-          <button
-            id="btnReset"
-            class="reset-btn"
-            title="Clear likes & declines"
-          >
-            Reset decisions
-          </button>
-        </nav>
+        <nav class="footer-right"></nav>
       </div>
       <div class="footer-bottom">
         © <span id="year"></span> THINKER — Connecting curious minds campuswide

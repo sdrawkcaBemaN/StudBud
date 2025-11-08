@@ -4,7 +4,10 @@ import {
   updateDoc,
   getDoc,
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
-import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+import {
+  onAuthStateChanged,
+  signOut,
+} from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
 import { supabase } from "./supabase-config.js";
 
 const usernameInput = document.getElementById("username");
@@ -19,6 +22,7 @@ const form = document.getElementById("profileForm");
 const uploadBtn = document.getElementById("uploadBtn");
 const profileImage = document.getElementById("profileImage");
 const profilePicInput = document.getElementById("profilePicInput");
+const logoutBtn = document.getElementById("logoutBtn");
 
 onAuthStateChanged(auth, async (user) => {
   if (!user) return (window.location.href = "login.html");
@@ -47,17 +51,14 @@ profilePicInput.addEventListener("change", async (event) => {
   if (!user) return;
 
   try {
-    // Create unique filename
     const fileName = `${user.uid}_${Date.now()}_${file.name}`;
 
-    // Upload to Supabase storage bucket 'profile-pics'
     const { data, error } = await supabase.storage
       .from("profile-pics")
       .upload(fileName, file);
 
     if (error) throw error;
 
-    // Get public URL
     const { data: urlData } = supabase.storage
       .from("profile-pics")
       .getPublicUrl(fileName);
@@ -66,10 +67,8 @@ profilePicInput.addEventListener("change", async (event) => {
 
     if (!publicUrl) throw new Error("Could not get public URL");
 
-    // Save URL to Firebase Firestore
     await updateDoc(doc(db, "users", user.uid), { profilePic: publicUrl });
 
-    // Update image instantly
     profileImage.src = publicUrl;
 
     alert("Profile picture updated!");
@@ -79,10 +78,26 @@ profilePicInput.addEventListener("change", async (event) => {
   }
 });
 
+function doLogout(e) {
+  e.preventDefault();
+  signOut(auth).then(() => {
+    window.location.href = "home.html";
+  });
+}
+
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
   const user = auth.currentUser;
   if (!user) return;
+
+  const ref = doc(db, "users", user.uid);
+  const snap = await getDoc(ref);
+  const data = snap.data();
+
+  if (!data.profilePic || data.profilePic === "https://placehold.co/142x142") {
+    alert("Please upload a profile picture before saving your profile.");
+    return;
+  }
 
   await updateDoc(doc(db, "users", user.uid), {
     username: usernameInput.value,
@@ -96,3 +111,5 @@ form.addEventListener("submit", async (e) => {
   alert("Profile updated!");
   window.location.href = "match.html";
 });
+
+if (logoutBtn) logoutBtn.addEventListener("click", doLogout);
